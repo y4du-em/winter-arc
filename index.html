@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="100-day Winter Arc habit tracker">
+  <meta name="theme-color" content="#0b1426">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Winter Arc</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>Winter Arc</h1>
+      <p class="muted" id="header-progress"></p>
+    </div>
+    <div class="total-pill" title="Total points so far">
+      <span id="header-total">0</span><small>pts</small>
+    </div>
+  </header>
+
+  <div class="banner" id="backup-banner" role="status" hidden>
+    <p>It's been a while since your last backup. Save a copy so your progress can't be lost.</p>
+    <div class="banner-actions">
+      <button class="button primary" id="banner-backup">Back up now</button>
+      <button class="button ghost" id="banner-dismiss">Later</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- TODAY -->
+    <section class="view" id="view-today" aria-labelledby="nav-today">
+      <div class="card hero" id="today-not-started" hidden>
+        <p class="eyebrow">Winter Arc begins in</p>
+        <p class="hero-number" id="countdown-days"></p>
+        <p class="muted" id="countdown-label"></p>
+      </div>
+
+      <div id="today-tracker">
+        <div class="card date-nav">
+          <button class="icon-button" id="day-prev" aria-label="Previous day">‹</button>
+          <label class="date-picker">
+            <span id="day-label"></span>
+            <input type="date" id="day-input" aria-label="Choose a day to edit">
+          </label>
+          <button class="icon-button" id="day-next" aria-label="Next day">›</button>
+        </div>
+
+        <div class="card score-card">
+          <div>
+            <p class="eyebrow" id="day-number"></p>
+            <p class="hero-number"><span id="day-score">0</span><span class="hero-max" id="day-max"></span></p>
+            <p class="status-pill" id="day-status"></p>
+          </div>
+          <div class="ring" id="workout-ring" role="img">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle class="ring-track" cx="32" cy="32" r="27"></circle>
+              <circle class="ring-fill" id="workout-ring-fill" cx="32" cy="32" r="27"></circle>
+            </svg>
+            <div class="ring-label"><strong id="workout-ring-count">0/5</strong><small>workouts<br>this week</small></div>
+          </div>
+        </div>
+
+        <div class="checklist">
+          <div class="card item">
+            <div class="item-text">
+              <span class="item-icon" aria-hidden="true">🚭</span>
+              <div><p class="item-title">Cigarettes</p><p class="item-hint" id="hint-cigarettes"></p></div>
+            </div>
+            <div class="counter">
+              <button class="icon-button" data-field="cigarettes" data-step="-1" aria-label="One fewer cigarette">−</button>
+              <output id="count-cigarettes">0</output>
+              <button class="icon-button" data-field="cigarettes" data-step="1" aria-label="One more cigarette">+</button>
+            </div>
+          </div>
+
+          <div class="card item">
+            <div class="item-text">
+              <span class="item-icon" aria-hidden="true">🍺</span>
+              <div><p class="item-title">Drinks <small class="muted">(1 peg = 1 beer)</small></p><p class="item-hint" id="hint-drinks"></p></div>
+            </div>
+            <div class="counter">
+              <button class="icon-button" data-field="drinks" data-step="-1" aria-label="One fewer drink">−</button>
+              <output id="count-drinks">0</output>
+              <button class="icon-button" data-field="drinks" data-step="1" aria-label="One more drink">+</button>
+            </div>
+          </div>
+
+          <button class="card item toggle" data-field="workout" aria-pressed="false">
+            <span class="item-text"><span class="item-icon" aria-hidden="true">💪</span><span><span class="item-title">Workout done</span><span class="item-hint" id="hint-workout"></span></span></span>
+            <span class="check" aria-hidden="true"></span>
+          </button>
+          <button class="card item toggle" data-field="food" aria-pressed="false">
+            <span class="item-text"><span class="item-icon" aria-hidden="true">🍽️</span><span><span class="item-title">Ate enough food</span><span class="item-hint" id="hint-food"></span></span></span>
+            <span class="check" aria-hidden="true"></span>
+          </button>
+          <button class="card item toggle" data-field="water" aria-pressed="false">
+            <span class="item-text"><span class="item-icon" aria-hidden="true">💧</span><span><span class="item-title">Drank ~3 L water</span><span class="item-hint" id="hint-water"></span></span></span>
+            <span class="check" aria-hidden="true"></span>
+          </button>
+          <button class="card item toggle" data-field="sleep" aria-pressed="false">
+            <span class="item-text"><span class="item-icon" aria-hidden="true">😴</span><span><span class="item-title">Slept 7 h+</span><span class="item-hint" id="hint-sleep"></span></span></span>
+            <span class="check" aria-hidden="true"></span>
+          </button>
+
+          <div class="card challenge">
+            <button class="item toggle" data-field="challengeDone" aria-pressed="false">
+              <span class="item-text"><span class="item-icon" aria-hidden="true">🔥</span><span><span class="item-title">Did something new or feared</span><span class="item-hint" id="hint-challenge"></span></span></span>
+              <span class="check" aria-hidden="true"></span>
+            </button>
+            <label class="challenge-note" id="challenge-note-wrap" hidden>
+              <span class="label-text">What was it?</span>
+              <textarea id="challenge-note" rows="2" maxlength="200" placeholder="e.g. Cold shower, spoke up in a meeting, called someone I'd been avoiding"></textarea>
+              <span class="muted small" id="challenge-note-count">0/200</span>
+            </label>
+          </div>
+
+          <div class="card weigh-in" id="weigh-in-card">
+            <p class="item-title"><span aria-hidden="true">⚖️</span> <span id="weigh-in-title">Weigh-in</span></p>
+            <form class="inline-form" id="weigh-in-form">
+              <input type="number" id="weigh-in-input" inputmode="decimal" step="0.1" min="20" max="400" placeholder="kg" aria-label="Weight in kilograms">
+              <button class="button primary" type="submit">Save</button>
+              <button class="button ghost" type="button" id="weigh-in-remove" hidden>Remove</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="day-actions">
+          <button class="button primary wide" id="mark-logged">Log this day (nothing to tick)</button>
+          <button class="button ghost" id="clear-day">Clear this day</button>
+        </div>
+
+        <h2 class="section-title">Current streaks</h2>
+        <div class="chips" id="streak-chips"></div>
+      </div>
+    </section>
+
+    <!-- PROGRESS -->
+    <section class="view" id="view-progress" aria-labelledby="nav-progress" hidden>
+      <div class="stat-grid" id="progress-stats"></div>
+
+      <div class="card">
+        <h2 class="card-title">Daily points</h2>
+        <p class="muted small">Each day's score, including the Sunday workout bonus or penalty.</p>
+        <div class="chart-box"><canvas id="chart-daily" aria-label="Bar chart of daily points"></canvas></div>
+        <p class="empty" id="chart-empty" hidden>The graph fills in once the challenge starts.</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Running total</h2>
+        <div class="chart-box"><canvas id="chart-total" aria-label="Line chart of running total points"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">100-day map</h2>
+        <div class="heatmap" id="heatmap" role="grid" aria-label="Score for each challenge day"></div>
+        <div class="heatmap-legend" id="heatmap-legend"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Streaks</h2>
+        <table class="table" id="streak-table">
+          <thead><tr><th scope="col">Habit</th><th scope="col">Current</th><th scope="col">Best</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Badges</h2>
+        <div id="badge-list"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Fears faced <span class="count-pill" id="fears-count">0</span></h2>
+        <ol class="fears" id="fears-list"></ol>
+        <p class="empty" id="fears-empty">Nothing yet. Do one thing today that scares you.</p>
+      </div>
+    </section>
+
+    <!-- WEIGHT -->
+    <section class="view" id="view-weight" aria-labelledby="nav-weight" hidden>
+      <div class="stat-grid" id="weight-stats"></div>
+
+      <div class="card" id="goal-card">
+        <h2 class="card-title">Goal progress</h2>
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="goal-progress">
+          <div class="progress-fill" id="goal-progress-fill"></div>
+        </div>
+        <p class="muted small" id="goal-progress-label"></p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Weight trend</h2>
+        <div class="chart-box"><canvas id="chart-weight" aria-label="Line chart of weigh-ins"></canvas></div>
+        <p class="empty" id="weight-empty">Log your first weigh-in to see the trend.</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Add or fix a weigh-in</h2>
+        <form class="inline-form" id="weight-form">
+          <input type="date" id="weight-date" aria-label="Weigh-in date" required>
+          <input type="number" id="weight-value" inputmode="decimal" step="0.1" min="20" max="400" placeholder="kg" aria-label="Weight in kilograms" required>
+          <button class="button primary" type="submit">Save</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">All weigh-ins</h2>
+        <table class="table" id="weight-table">
+          <thead><tr><th scope="col">Date</th><th scope="col">Weight</th><th scope="col">Change</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="view-settings" aria-labelledby="nav-settings" hidden>
+      <form class="card settings-form" id="settings-form" novalidate>
+        <h2 class="card-title">Challenge</h2>
+        <div class="field-grid">
+          <label>Start date<input type="date" name="startDate" required></label>
+          <label>End date<input type="date" name="endDate" required></label>
+          <label>Height (cm)<input type="number" name="heightCm" inputmode="decimal" step="0.1" placeholder="e.g. 175"></label>
+          <label>Goal weight (kg)<input type="number" name="goalWeightKg" inputmode="decimal" step="0.1" placeholder="e.g. 75"></label>
+          <label>Workout days / week<input type="number" name="workoutDaysPerWeek" min="1" max="7" step="1" required></label>
+        </div>
+
+        <h2 class="card-title">Points</h2>
+        <div class="field-grid" id="points-fields"></div>
+
+        <ul class="errors" id="settings-errors" hidden></ul>
+        <div class="form-actions">
+          <button class="button primary" type="submit">Save settings</button>
+          <button class="button ghost" type="button" id="reset-points">Reset points to default</button>
+        </div>
+      </form>
+
+      <div class="card">
+        <h2 class="card-title">Backup &amp; restore</h2>
+        <p class="muted small">Your data lives only on this device. Download a backup regularly and keep it somewhere safe (Drive, email to yourself). Restore it on any device with Import.</p>
+        <dl class="facts">
+          <dt>Last backup</dt><dd id="last-backup">Never</dd>
+          <dt>Protected storage</dt><dd id="persist-status">Checking…</dd>
+        </dl>
+        <div class="form-actions">
+          <button class="button primary" id="export-button">Download backup</button>
+          <label class="button ghost file-button">Import backup<input type="file" id="import-input" accept="application/json,.json" hidden></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tab-bar" aria-label="Main">
+    <button class="tab" id="nav-today" data-view="today" aria-current="page"><span aria-hidden="true">✅</span>Today</button>
+    <button class="tab" id="nav-progress" data-view="progress"><span aria-hidden="true">📈</span>Progress</button>
+    <button class="tab" id="nav-weight" data-view="weight"><span aria-hidden="true">⚖️</span>Weight</button>
+    <button class="tab" id="nav-settings" data-view="settings"><span aria-hidden="true">⚙️</span>Settings</button>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="vendor/chart.umd.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
