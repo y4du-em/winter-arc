@@ -53,6 +53,7 @@ export function scoreDay(entry, points) {
     water: entry.water ? points.water : 0,
     sleep: entry.sleep ? points.sleep : 0,
     challenge: isChallengeComplete(entry) ? points.challenge : 0,
+    noFap: entry.noFap ? points.noFap : 0,
   };
   const total = Object.values(breakdown).reduce((sum, value) => sum + value, 0);
   return { total, breakdown };
@@ -66,7 +67,7 @@ export function scoreDay(entry, points) {
 export function maxDailyPoints(points) {
   return (
     points.smokingZero + points.drinkingZero + points.workout + points.food +
-    points.water + points.sleep + points.challenge
+    points.water + points.sleep + points.challenge + points.noFap
   );
 }
 

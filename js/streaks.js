@@ -15,6 +15,7 @@ export const HABITS = Object.freeze([
   { id: 'water', label: 'Water', icon: '💧', isMet: (entry) => entry?.water === true },
   { id: 'sleep', label: 'Sleep 7h+', icon: '😴', isMet: (entry) => entry?.sleep === true },
   { id: 'challenge', label: 'New / feared thing', icon: '🔥', isMet: (entry) => isChallengeComplete(entry) },
+  { id: 'noFap', label: 'No fap', icon: '🧘', isMet: (entry) => entry?.noFap === true },
 ]);
 
 function challengeDatesUpTo(settings, today) {

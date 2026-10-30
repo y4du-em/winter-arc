@@ -21,6 +21,7 @@ export function createEmptyEntry() {
     sleep: false,
     challengeDone: false,
     challengeNote: '',
+    noFap: false,
   };
 }
 
@@ -41,7 +42,23 @@ export function createEmptyData(now) {
 }
 
 /**
- * Validates parsed backup data and fills in any setting added in a newer app version.
+ * Upgrades entries saved by an older app version: fields added later get their
+ * "not done" value, so old data stays valid instead of being rejected.
+ * Anything that isn't an entry object is passed through for validation to report.
+ * @param {unknown} entries
+ * @returns {unknown}
+ */
+function migrateEntries(entries) {
+  if (typeof entries !== 'object' || entries === null || Array.isArray(entries)) return entries;
+  return Object.fromEntries(Object.entries(entries).map(([date, entry]) => {
+    const isEntryObject = typeof entry === 'object' && entry !== null && !Array.isArray(entry);
+    if (!isEntryObject || 'noFap' in entry) return [date, entry];
+    return [date, { ...entry, noFap: false }];
+  }));
+}
+
+/**
+ * Validates parsed backup data and fills in any setting or entry field added in a newer app version.
  * @param {unknown} raw Parsed JSON.
  * @returns {{ isValid: true, data: object } | { isValid: false, errors: string[] }}
  */
@@ -55,9 +72,10 @@ export function parseBackup(raw) {
 
   const defaults = createDefaultSettings();
   const settings = { ...defaults, ...raw.settings, points: { ...defaults.points, ...raw.settings?.points } };
+  const entries = migrateEntries(raw.entries);
   const errors = [
     ...validateSettings(settings),
-    ...validateDateMap(raw.entries, 'entries', validateEntry),
+    ...validateDateMap(entries, 'entries', validateEntry),
     ...validateDateMap(raw.weights, 'weights', validateWeight),
   ];
   if (errors.length > 0) return { isValid: false, errors };
@@ -68,7 +86,7 @@ export function parseBackup(raw) {
     data: {
       version: DATA_VERSION,
       settings,
-      entries: raw.entries,
+      entries,
       weights: raw.weights,
       meta: {
         createdAt: typeof meta.createdAt === 'string' ? meta.createdAt : null,

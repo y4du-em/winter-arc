@@ -78,6 +78,66 @@ describe('parseBackup', () => {
     assert.equal(result.data.settings.points.challenge, 10);
   });
 
+  it('should accept an entry saved before no fap existed', () => {
+    // Arrange
+    const oldEntry = makeEntry();
+    delete oldEntry.noFap;
+    const raw = makeData({ entries: { '2026-10-26': oldEntry } });
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.equal(result.isValid, true);
+  });
+
+  it('should mark no fap as not ticked on entries saved before it existed', () => {
+    // Arrange
+    const oldEntry = makeEntry({ workout: true });
+    delete oldEntry.noFap;
+    const raw = makeData({ entries: { '2026-10-26': oldEntry } });
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.deepEqual(result.data.entries['2026-10-26'], { ...oldEntry, noFap: false });
+  });
+
+  it('should keep a saved no fap tick unchanged', () => {
+    // Arrange
+    const raw = makeData({ entries: { '2026-10-26': makeEntry({ noFap: true }) } });
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.equal(result.data.entries['2026-10-26'].noFap, true);
+  });
+
+  it('should reject a no fap value that is not true or false', () => {
+    // Arrange
+    const raw = makeData({ entries: { '2026-10-26': makeEntry({ noFap: 'yes' }) } });
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.deepEqual(result.errors, ['entries 2026-10-26: "noFap" must be true or false.']);
+  });
+
+  it('should fill in the no fap point value for settings saved before it existed', () => {
+    // Arrange
+    const raw = makeData();
+    delete raw.settings.points.noFap;
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.equal(result.data.settings.points.noFap, 5);
+  });
+
   it('should reject an array', () => {
     // Arrange
     const raw = [];

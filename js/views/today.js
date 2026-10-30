@@ -13,7 +13,7 @@ import { validateWeight } from '../validation.js';
 const NOTE_SAVE_DELAY_MS = 500;
 const RING_RADIUS = 27;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
-const SIMPLE_TOGGLES = ['workout', 'food', 'water', 'sleep'];
+const SIMPLE_TOGGLES = ['workout', 'food', 'water', 'sleep', 'noFap'];
 
 /**
  * Creates the Today view.

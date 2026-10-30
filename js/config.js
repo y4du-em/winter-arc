@@ -50,6 +50,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
     water: 5,
     sleep: 5,
     challenge: 10,
+    noFap: 5,
     weeklyWorkoutBonus: 15,
     weeklyWorkoutPenalty: 15,
   }),

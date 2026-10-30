@@ -117,7 +117,7 @@ describe('isChallengeComplete', () => {
 });
 
 describe('scoreDay', () => {
-  it('should total 60 for a perfect day with default points', () => {
+  it('should total 65 for a perfect day with default points', () => {
     // Arrange
     const entry = makePerfectEntry();
 
@@ -125,7 +125,7 @@ describe('scoreDay', () => {
     const { total } = scoreDay(entry, makeSettings().points);
 
     // Assert
-    assert.equal(total, 60);
+    assert.equal(total, 65);
   });
 
   it('should total 0 for an unlogged day', () => {
@@ -148,6 +148,28 @@ describe('scoreDay', () => {
 
     // Assert
     assert.equal(breakdown.challenge, 0);
+  });
+
+  it('should give +5 for staying clean (no fap)', () => {
+    // Arrange
+    const entry = makeEntry({ noFap: true });
+
+    // Act
+    const { breakdown } = scoreDay(entry, makeSettings().points);
+
+    // Assert
+    assert.equal(breakdown.noFap, 5);
+  });
+
+  it('should give 0 for no fap when not ticked', () => {
+    // Arrange
+    const entry = makeEntry({ noFap: false });
+
+    // Act
+    const { breakdown } = scoreDay(entry, makeSettings().points);
+
+    // Assert
+    assert.equal(breakdown.noFap, 0);
   });
 
   it('should score drinks with the same scheme as cigarettes', () => {
@@ -174,7 +196,7 @@ describe('scoreDay', () => {
 });
 
 describe('maxDailyPoints', () => {
-  it('should be 60 with default points', () => {
+  it('should be 65 with default points', () => {
     // Arrange
     const { points } = makeSettings();
 
@@ -182,7 +204,7 @@ describe('maxDailyPoints', () => {
     const result = maxDailyPoints(points);
 
     // Assert
-    assert.equal(result, 60);
+    assert.equal(result, 65);
   });
 });
 

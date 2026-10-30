@@ -64,6 +64,28 @@ describe('habit streak rules', () => {
     assert.equal(result, false);
   });
 
+  it('should keep the no fap streak when ticked', () => {
+    // Arrange
+    const entry = makeEntry({ noFap: true });
+
+    // Act
+    const result = habit('noFap').isMet(entry);
+
+    // Assert
+    assert.equal(result, true);
+  });
+
+  it('should not count the no fap streak when not ticked', () => {
+    // Arrange
+    const entry = makeEntry({ noFap: false });
+
+    // Act
+    const result = habit('noFap').isMet(entry);
+
+    // Assert
+    assert.equal(result, false);
+  });
+
   it('should not count an unlogged day for any habit', () => {
     // Arrange
     const entry = undefined;
@@ -173,6 +195,17 @@ describe('isPerfectWeek', () => {
 
     // Assert
     assert.equal(result, false);
+  });
+
+  it('should still be perfect without no fap, since it is not part of Perfect week', () => {
+    // Arrange
+    const entries = entriesFor(WEEK_ONE, makePerfectEntry({ noFap: false }));
+
+    // Act
+    const result = isPerfectWeek(weekOne, entries, settings);
+
+    // Assert
+    assert.equal(result, true);
   });
 
   it('should still be perfect with one cigarette a day', () => {

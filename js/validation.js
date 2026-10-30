@@ -15,7 +15,7 @@ import {
 } from './config.js';
 import { isISODate } from './dates.js';
 
-const ENTRY_BOOLEAN_FIELDS = ['workout', 'food', 'water', 'sleep', 'challengeDone'];
+const ENTRY_BOOLEAN_FIELDS = ['workout', 'food', 'water', 'sleep', 'challengeDone', 'noFap'];
 const ENTRY_COUNT_FIELDS = ['cigarettes', 'drinks'];
 const MAX_POINT_VALUE = 1000;
 

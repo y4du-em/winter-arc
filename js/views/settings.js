@@ -22,6 +22,7 @@ const POINT_FIELDS = [
   { key: 'water', label: 'Water (+)' },
   { key: 'sleep', label: 'Sleep (+)' },
   { key: 'challenge', label: 'New / feared thing (+)' },
+  { key: 'noFap', label: 'No fap (+)' },
   { key: 'weeklyWorkoutBonus', label: 'Weekly workout goal met (+)' },
   { key: 'weeklyWorkoutPenalty', label: 'Weekly workout goal missed (−)' },
 ];

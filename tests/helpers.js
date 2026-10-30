@@ -14,13 +14,14 @@ export function makeEntry(overrides = {}) {
     sleep: false,
     challengeDone: false,
     challengeNote: '',
+    noFap: false,
     ...overrides,
   };
 }
 
 /** A day where every habit is met. */
 export function makePerfectEntry(overrides = {}) {
-  return makeEntry({ workout: true, food: true, water: true, sleep: true, challengeDone: true, challengeNote: 'Cold shower', ...overrides });
+  return makeEntry({ workout: true, food: true, water: true, sleep: true, challengeDone: true, challengeNote: 'Cold shower', noFap: true, ...overrides });
 }
 
 /** Default settings with optional overrides. */

@@ -12,6 +12,7 @@ A 100-day habit tracker (Mon Oct 26, 2026 → Tue Feb 2, 2027). It's an installa
 | Water ~3 L | +5 |
 | Sleep 7 h+ | +5 |
 | New / feared thing (must describe it) | +10 |
+| No fap | +5 |
 
 - **Weekly workout rule:** each Sunday you get +15 for 5+ workouts that week, or −15 for fewer. The short final week (Feb 1–2) has no weekly rule.
 - **Streaks:** smoking counts as "clean" at 1 cigarette or fewer, and drinking only at exactly 0 drinks. Badges come at 7/14/30/50/75/100 days, plus Perfect weeks.
