@@ -5,7 +5,12 @@
  * Bump CACHE_VERSION when the list of files changes.
  */
 
-const CACHE_VERSION = 'winter-arc-v1';
+const CACHE_VERSION = 'winter-arc-v2';
+
+// Always revalidate with the server instead of trusting the browser's HTTP cache.
+// GitHub Pages lets browsers reuse files for 10 minutes; without this, an update
+// could cache a mix of old and new files. Unchanged files cost only a 304 reply.
+const FRESH_FETCH = { cache: 'no-cache' };
 
 const APP_SHELL = [
   './',
@@ -36,7 +41,7 @@ const APP_SHELL = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(APP_SHELL.map((url) => new Request(url, FRESH_FETCH)))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (event) => {
@@ -54,7 +59,8 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(caches.open(CACHE_VERSION).then(async (cache) => {
     const cacheKey = request.mode === 'navigate' ? './index.html' : request;
     const cached = await cache.match(cacheKey, { ignoreSearch: request.mode === 'navigate' });
-    const refresh = fetch(request)
+    // Built from the URL because a navigation request can't be re-sent with new options.
+    const refresh = fetch(new Request(request.url, FRESH_FETCH))
       .then((response) => {
         if (response.ok) cache.put(cacheKey, response.clone());
         return response;
