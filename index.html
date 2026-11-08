@@ -66,6 +66,11 @@
           </div>
         </div>
 
+        <div class="card reminder" id="weigh-in-reminder" hidden>
+          <p><span aria-hidden="true">⚖️</span> <strong>Weigh-in day.</strong> Log your weight in the Weight tab.</p>
+          <button class="button primary" id="weigh-in-reminder-button">Log weight</button>
+        </div>
+
         <div class="checklist">
           <div class="card item">
             <div class="item-text">
@@ -128,24 +133,12 @@
               <span class="muted small" id="challenge-note-count">0/200</span>
             </label>
           </div>
-
-          <div class="card weigh-in" id="weigh-in-card">
-            <p class="item-title"><span aria-hidden="true">⚖️</span> <span id="weigh-in-title">Weigh-in</span></p>
-            <form class="inline-form" id="weigh-in-form">
-              <input type="number" id="weigh-in-input" inputmode="decimal" step="0.1" min="20" max="400" placeholder="kg" aria-label="Weight in kilograms">
-              <button class="button primary" type="submit">Save</button>
-              <button class="button ghost" type="button" id="weigh-in-remove" hidden>Remove</button>
-            </form>
-          </div>
         </div>
 
         <div class="day-actions">
           <button class="button primary wide" id="mark-logged">Log this day (nothing to tick)</button>
           <button class="button ghost" id="clear-day">Clear this day</button>
         </div>
-
-        <h2 class="section-title">Current streaks</h2>
-        <div class="chips" id="streak-chips"></div>
       </div>
     </section>
 

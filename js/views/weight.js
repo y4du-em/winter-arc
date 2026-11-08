@@ -17,7 +17,7 @@ function formatSignedKg(value) {
 /**
  * Creates the Weight view.
  * @param {{ getData: () => object, getToday: () => string, save: (mutate: (data: object) => void, message?: string) => Promise<void> }} app
- * @returns {{ render: () => void }}
+ * @returns {{ render: () => void, prefillDate: (isoDate: string) => void }}
  */
 export function createWeightView(app) {
   const dateInput = byId('weight-date');
@@ -102,5 +102,10 @@ export function createWeightView(app) {
     if (!dateInput.value) dateInput.value = today;
   }
 
-  return { render };
+  /** Puts a date into the add-weigh-in form, e.g. when coming from the Monday reminder. */
+  function prefillDate(isoDate) {
+    dateInput.value = isoDate;
+  }
+
+  return { render, prefillDate };
 }

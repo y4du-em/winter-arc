@@ -56,6 +56,12 @@ const app = {
     views.today.showDate(date);
     navigate('today');
   },
+
+  /** Opens the Weight screen with the add-weigh-in form set to a date. */
+  openWeighIn(date) {
+    views.weight.prefillDate(date);
+    navigate('weight');
+  },
 };
 
 function renderHeader() {

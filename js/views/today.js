@@ -1,14 +1,12 @@
 /**
- * Today screen: the daily checklist, score, workout ring, weigh-in and streak chips.
+ * Today screen: the daily checklist, score, workout ring and the Monday weigh-in reminder.
  */
 
 import { createEmptyEntry } from '../backup.js';
 import { ALLOWED_PER_DAY, CHALLENGE_NOTE_MAX_LENGTH, MAX_DAILY_COUNT, WEIGH_IN_DAY_OF_WEEK } from '../config.js';
 import { addDays, challengeWeeks, clampDate, dayOfWeek, daysBetween, findWeekContaining } from '../dates.js';
-import { byId, el, formatDate, formatSigned, readOptionalNumber, showToast } from '../dom.js';
+import { byId, formatDate, formatSigned } from '../dom.js';
 import { buildDailySeries, countWorkouts, isChallengeComplete, maxDailyPoints, scoreLimitedHabit } from '../scoring.js';
-import { streakSummary } from '../streaks.js';
-import { validateWeight } from '../validation.js';
 
 const NOTE_SAVE_DELAY_MS = 500;
 const RING_RADIUS = 27;
@@ -17,7 +15,7 @@ const SIMPLE_TOGGLES = ['workout', 'food', 'water', 'sleep', 'noFap', 'screenTim
 
 /**
  * Creates the Today view.
- * @param {{ getData: () => object, getToday: () => string, save: (mutate: (data: object) => void, message?: string) => Promise<void> }} app
+ * @param {{ getData: () => object, getToday: () => string, save: (mutate: (data: object) => void, message?: string) => Promise<void>, openWeighIn: (date: string) => void }} app
  * @returns {{ render: () => void, showDate: (isoDate: string) => void }}
  */
 export function createTodayView(app) {
@@ -25,7 +23,6 @@ export function createTodayView(app) {
   let pendingNote = null;
 
   const noteInput = byId('challenge-note');
-  const weighInInput = byId('weigh-in-input');
 
   function selectableRange() {
     const { settings } = app.getData();
@@ -88,22 +85,7 @@ export function createTodayView(app) {
       if (event.target.value) showDate(event.target.value);
     });
 
-    byId('weigh-in-form').addEventListener('submit', (event) => {
-      event.preventDefault();
-      const weightKg = readOptionalNumber(weighInInput);
-      const errors = validateWeight(weightKg);
-      if (errors.length > 0) {
-        showToast(errors[0], 'error');
-        return;
-      }
-      const date = viewDate;
-      weighInInput.blur();
-      app.save((data) => { data.weights[date] = Math.round(weightKg * 10) / 10; }, 'Weight saved');
-    });
-    byId('weigh-in-remove').addEventListener('click', () => {
-      const date = viewDate;
-      app.save((data) => { delete data.weights[date]; }, 'Weigh-in removed');
-    });
+    byId('weigh-in-reminder-button').addEventListener('click', () => app.openWeighIn(viewDate));
 
     byId('mark-logged').addEventListener('click', () => updateEntry(viewDate, () => {}, 'Day logged'));
     byId('clear-day').addEventListener('click', () => {
@@ -180,23 +162,9 @@ export function createTodayView(app) {
       : `${count} workouts this short week (no weekly goal)`);
   }
 
-  function renderWeighIn(data) {
+  function renderWeighInReminder(data) {
     const isWeighInDay = dayOfWeek(viewDate) === WEIGH_IN_DAY_OF_WEEK;
-    const savedWeight = data.weights[viewDate];
-    byId('weigh-in-card').classList.toggle('highlight', isWeighInDay && savedWeight === undefined);
-    byId('weigh-in-title').textContent = isWeighInDay ? 'Monday weigh-in' : 'Weight (optional)';
-    byId('weigh-in-remove').hidden = savedWeight === undefined;
-    if (document.activeElement !== weighInInput) weighInInput.value = savedWeight ?? '';
-  }
-
-  function renderStreakChips(data, today) {
-    const chips = streakSummary(data.settings, data.entries, today).map(({ habit, current }) =>
-      el('span', { className: `chip${current > 0 ? ' active' : ''}`, attrs: { title: `${habit.label}: ${current}-day streak` } }, [
-        el('span', { text: habit.icon, attrs: { 'aria-hidden': 'true' } }),
-        ` ${habit.label} `,
-        el('strong', { text: `${current}d` }),
-      ]));
-    byId('streak-chips').replaceChildren(...chips);
+    byId('weigh-in-reminder').hidden = !isWeighInDay || data.weights[viewDate] !== undefined;
   }
 
   /** Re-renders the view from current data. */
@@ -225,10 +193,9 @@ export function createTodayView(app) {
     renderScore(data, today);
     renderWorkoutRing(data);
     renderChecklist(entry, data.settings.points);
-    renderWeighIn(data);
+    renderWeighInReminder(data);
     byId('mark-logged').hidden = Boolean(entry);
     byId('clear-day').hidden = !entry;
-    renderStreakChips(data, today);
   }
 
   bindEvents();
