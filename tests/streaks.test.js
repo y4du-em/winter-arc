@@ -97,7 +97,7 @@ describe('habit streak rules', () => {
     assert.deepEqual(result, [true, true]);
   });
 
-  it('should keep smoking ≤ 1 but break smoking 0 with one cigarette', () => {
+  it('should keep smoking 1 but break smoking 0 with one cigarette', () => {
     // Arrange
     const entry = makeEntry({ cigarettes: 1 });
 

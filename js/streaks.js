@@ -8,7 +8,7 @@ import { countWorkouts, isChallengeComplete } from './scoring.js';
 
 /** Each habit and the rule a day must pass to keep its streak. */
 export const HABITS = Object.freeze([
-  { id: 'smoking', label: 'Smoking ≤ 1', icon: '🚭', isMet: (entry) => Number.isInteger(entry?.cigarettes) && entry.cigarettes <= SMOKING_STREAK_MAX },
+  { id: 'smoking', label: 'Smoking 1', icon: '🚭', isMet: (entry) => Number.isInteger(entry?.cigarettes) && entry.cigarettes <= SMOKING_STREAK_MAX },
   { id: 'smokeFree', label: 'Smoking 0', icon: '🌬️', isMet: (entry) => Number.isInteger(entry?.cigarettes) && entry.cigarettes <= SMOKE_FREE_STREAK_MAX },
   { id: 'drinking', label: 'No drinks', icon: '🚫', isMet: (entry) => Number.isInteger(entry?.drinks) && entry.drinks <= DRINKING_STREAK_MAX },
   { id: 'workout', label: 'Workout', icon: '💪', isMet: (entry) => entry?.workout === true },
@@ -59,7 +59,7 @@ export function bestStreak(habit, settings, entries, today) {
 const PERFECT_WEEK_DAILY_HABIT_IDS = Object.freeze(['smoking', 'drinking', 'food', 'water', 'sleep', 'noFap', 'screenTime']);
 
 /**
- * Whether a full week counts as perfect: every day smoking ≤ 1, no drinks,
+ * Whether a full week counts as perfect: every day smoking 1 (at most one cigarette), no drinks,
  * ate enough, water, sleep, no fap and low screen time, plus the weekly workout goal.
  * @returns {boolean}
  */
