@@ -1,11 +1,11 @@
 /**
- * Progress screen: summary stats, points charts, 100-day map, day-by-day list, streaks, badges and fears faced.
+ * Progress screen: summary stats, points charts, 100-day map, day-by-day list, streaks and badges.
  */
 
 import { renderDailyPointsChart, renderRunningTotalChart } from '../charts.js';
 import { byId, el, formatDate, formatSigned, statTile } from '../dom.js';
 import { renderHeatmap } from '../heatmap.js';
-import { buildDailySeries, isChallengeComplete, maxDailyPoints } from '../scoring.js';
+import { buildDailySeries, maxDailyPoints } from '../scoring.js';
 import { OVERVIEW_ID } from '../day-log.js';
 import { HABITS, countPerfectWeeks, streakSummary } from '../streaks.js';
 import { createDayLog } from './day-log.js';
@@ -46,19 +46,6 @@ function renderBadges(summary, perfectWeeks) {
     el('span', { className: `badge wide${perfectWeeks > 0 ? ' earned' : ''}`, text: `× ${perfectWeeks}` }),
   ]);
   byId('badge-list').replaceChildren(...habitRows, perfectRow);
-}
-
-function renderFears(data, series) {
-  const challengeDates = new Set(series.map((day) => day.date));
-  const fears = Object.entries(data.entries)
-    .filter(([date, entry]) => challengeDates.has(date) && isChallengeComplete(entry))
-    .sort(([first], [second]) => second.localeCompare(first));
-  byId('fears-count').textContent = String(fears.length);
-  byId('fears-empty').hidden = fears.length > 0;
-  byId('fears-list').replaceChildren(...fears.map(([date, entry]) => el('li', {}, [
-    el('time', { className: 'muted small', text: formatDate(date), attrs: { datetime: date } }),
-    el('p', { text: entry.challengeNote.trim() }),
-  ])));
 }
 
 /**
@@ -104,7 +91,6 @@ export function createProgressView(app) {
     dayLog.render();
     renderStreakTable(summary);
     renderBadges(summary, perfectWeeks);
-    renderFears(data, series);
   }
 
   return { render };

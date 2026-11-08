@@ -4,7 +4,7 @@
 
 import { DRINKING_STREAK_MAX, SMOKE_FREE_STREAK_MAX, SMOKING_STREAK_MAX, STREAK_MILESTONES } from './config.js';
 import { challengeWeeks, listDates } from './dates.js';
-import { countWorkouts, isChallengeComplete } from './scoring.js';
+import { countWorkouts } from './scoring.js';
 
 /** Each habit and the rule a day must pass to keep its streak. */
 export const HABITS = Object.freeze([
@@ -15,7 +15,6 @@ export const HABITS = Object.freeze([
   { id: 'food', label: 'Ate enough', icon: '🍽️', isMet: (entry) => entry?.food === true },
   { id: 'water', label: 'Water', icon: '💧', isMet: (entry) => entry?.water === true },
   { id: 'sleep', label: 'Sleep 7h+', icon: '😴', isMet: (entry) => entry?.sleep === true },
-  { id: 'challenge', label: 'New / feared thing', icon: '🔥', isMet: (entry) => isChallengeComplete(entry) },
   { id: 'noFap', label: 'No fap', icon: '🧘', isMet: (entry) => entry?.noFap === true },
   { id: 'screenTime', label: 'Low screen time', icon: '📵', isMet: (entry) => entry?.screenTime === true },
 ]);

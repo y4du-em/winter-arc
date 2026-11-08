@@ -12,8 +12,6 @@ export function makeEntry(overrides = {}) {
     food: false,
     water: false,
     sleep: false,
-    challengeDone: false,
-    challengeNote: '',
     noFap: false,
     screenTime: false,
     ...overrides,
@@ -22,7 +20,7 @@ export function makeEntry(overrides = {}) {
 
 /** A day where every habit is met. */
 export function makePerfectEntry(overrides = {}) {
-  return makeEntry({ workout: true, food: true, water: true, sleep: true, challengeDone: true, challengeNote: 'Cold shower', noFap: true, screenTime: true, ...overrides });
+  return makeEntry({ workout: true, food: true, water: true, sleep: true, noFap: true, screenTime: true, ...overrides });
 }
 
 /** Default settings with optional overrides. */

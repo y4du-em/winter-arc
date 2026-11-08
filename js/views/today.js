@@ -3,12 +3,11 @@
  */
 
 import { createEmptyEntry } from '../backup.js';
-import { ALLOWED_PER_DAY, CHALLENGE_NOTE_MAX_LENGTH, MAX_DAILY_COUNT, WEIGH_IN_DAY_OF_WEEK } from '../config.js';
+import { ALLOWED_PER_DAY, MAX_DAILY_COUNT, WEIGH_IN_DAY_OF_WEEK } from '../config.js';
 import { addDays, challengeWeeks, clampDate, dayOfWeek, daysBetween, findWeekContaining } from '../dates.js';
 import { byId, formatDate, formatSigned } from '../dom.js';
-import { buildDailySeries, countWorkouts, isChallengeComplete, maxDailyPoints, scoreLimitedHabit } from '../scoring.js';
+import { buildDailySeries, countWorkouts, maxDailyPoints, scoreLimitedHabit } from '../scoring.js';
 
-const NOTE_SAVE_DELAY_MS = 500;
 const RING_RADIUS = 27;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 const SIMPLE_TOGGLES = ['workout', 'food', 'water', 'sleep', 'noFap', 'screenTime'];
@@ -20,9 +19,6 @@ const SIMPLE_TOGGLES = ['workout', 'food', 'water', 'sleep', 'noFap', 'screenTim
  */
 export function createTodayView(app) {
   let viewDate = null;
-  let pendingNote = null;
-
-  const noteInput = byId('challenge-note');
 
   function selectableRange() {
     const { settings } = app.getData();
@@ -37,16 +33,7 @@ export function createTodayView(app) {
     }, message);
   }
 
-  function flushPendingNote() {
-    if (!pendingNote) return;
-    clearTimeout(pendingNote.timer);
-    const { date, text } = pendingNote;
-    pendingNote = null;
-    updateEntry(date, (entry) => { entry.challengeNote = text; });
-  }
-
   function showDate(isoDate) {
-    flushPendingNote();
     const { min, max } = selectableRange();
     viewDate = clampDate(isoDate, min, max);
     render();
@@ -66,18 +53,9 @@ export function createTodayView(app) {
     document.querySelectorAll('#view-today .toggle').forEach((button) => {
       button.addEventListener('click', () => {
         const { field } = button.dataset;
-        if (field === 'challengeDone') flushPendingNote();
         updateEntry(viewDate, (entry) => { entry[field] = !entry[field]; });
       });
     });
-
-    noteInput.addEventListener('input', () => {
-      const text = noteInput.value.slice(0, CHALLENGE_NOTE_MAX_LENGTH);
-      byId('challenge-note-count').textContent = `${text.length}/${CHALLENGE_NOTE_MAX_LENGTH}`;
-      clearTimeout(pendingNote?.timer);
-      pendingNote = { date: viewDate, text, timer: setTimeout(flushPendingNote, NOTE_SAVE_DELAY_MS) };
-    });
-    noteInput.addEventListener('blur', flushPendingNote);
 
     byId('day-prev').addEventListener('click', () => showDate(addDays(viewDate, -1)));
     byId('day-next').addEventListener('click', () => showDate(addDays(viewDate, 1)));
@@ -90,7 +68,6 @@ export function createTodayView(app) {
     byId('mark-logged').addEventListener('click', () => updateEntry(viewDate, () => {}, 'Day logged'));
     byId('clear-day').addEventListener('click', () => {
       if (!confirm(`Clear everything logged for ${formatDate(viewDate)}?`)) return;
-      flushPendingNote();
       const date = viewDate;
       app.save((data) => { delete data.entries[date]; }, 'Day cleared');
     });
@@ -120,17 +97,6 @@ export function createTodayView(app) {
       button.setAttribute('aria-pressed', String(values[button.dataset.field]));
     });
     SIMPLE_TOGGLES.forEach((field) => { byId(`hint-${field}`).textContent = `${formatSigned(points[field])} pts`; });
-
-    const isMissingNote = values.challengeDone && !isChallengeComplete(values);
-    const challengeHint = byId('hint-challenge');
-    challengeHint.textContent = isMissingNote ? `Write what it was to earn ${formatSigned(points.challenge)}` : `${formatSigned(points.challenge)} pts`;
-    challengeHint.classList.toggle('warning-text', isMissingNote);
-
-    byId('challenge-note-wrap').hidden = !values.challengeDone;
-    if (document.activeElement !== noteInput && !pendingNote) {
-      noteInput.value = values.challengeNote;
-      byId('challenge-note-count').textContent = `${values.challengeNote.length}/${CHALLENGE_NOTE_MAX_LENGTH}`;
-    }
   }
 
   function renderScore(data, today) {

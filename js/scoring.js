@@ -19,16 +19,6 @@ export function scoreLimitedHabit(count, rules) {
 }
 
 /**
- * Whether the "new or feared thing" counts for the day.
- * Ticking it is not enough: a description must be written too.
- * @param {object|null|undefined} entry
- * @returns {boolean}
- */
-export function isChallengeComplete(entry) {
-  return Boolean(entry?.challengeDone) && typeof entry.challengeNote === 'string' && entry.challengeNote.trim().length > 0;
-}
-
-/**
  * Scores one logged day.
  * @param {object|null|undefined} entry Daily entry, or nothing for an unlogged day.
  * @param {object} points Point values from settings.points.
@@ -52,7 +42,6 @@ export function scoreDay(entry, points) {
     food: entry.food ? points.food : 0,
     water: entry.water ? points.water : 0,
     sleep: entry.sleep ? points.sleep : 0,
-    challenge: isChallengeComplete(entry) ? points.challenge : 0,
     noFap: entry.noFap ? points.noFap : 0,
     screenTime: entry.screenTime ? points.screenTime : 0,
   };
@@ -68,7 +57,7 @@ export function scoreDay(entry, points) {
 export function maxDailyPoints(points) {
   return (
     points.smokingZero + points.drinkingZero + points.workout + points.food +
-    points.water + points.sleep + points.challenge + points.noFap +
+    points.water + points.sleep + points.noFap +
     points.screenTime
   );
 }

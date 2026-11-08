@@ -66,16 +66,39 @@ describe('parseBackup', () => {
     assert.equal(result.isValid, false);
   });
 
-  it('should fill in a point value missing from an older backup', () => {
+  it('should drop the removed new/feared thing point value from an older backup', () => {
     // Arrange
     const raw = makeData();
-    delete raw.settings.points.challenge;
+    raw.settings.points.challenge = 10;
 
     // Act
     const result = parseBackup(raw);
 
     // Assert
-    assert.equal(result.data.settings.points.challenge, 10);
+    assert.equal('challenge' in result.data.settings.points, false);
+  });
+
+  it('should remove the new/feared thing fields from entries saved before it was dropped', () => {
+    // Arrange
+    const entry = makeEntry({ workout: true });
+    const raw = makeData({ entries: { '2026-10-26': { ...entry, challengeDone: true, challengeNote: 'Cold shower' } } });
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.deepEqual(result.data.entries['2026-10-26'], entry);
+  });
+
+  it('should still accept an old entry whose new/feared thing note is longer than any limit', () => {
+    // Arrange
+    const raw = makeData({ entries: { '2026-10-26': { ...makeEntry(), challengeDone: 'yes', challengeNote: 'x'.repeat(500) } } });
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.equal(result.isValid, true);
   });
 
   it('should accept an entry saved before no fap existed', () => {

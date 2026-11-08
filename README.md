@@ -11,7 +11,6 @@ A 100-day habit tracker (Mon Oct 26, 2026 → Tue Feb 2, 2027). It's an installa
 | Ate enough | +10 |
 | Water ~3 L | +5 |
 | Sleep 7 h+ | +5 |
-| New / feared thing (must describe it) | +10 |
 | No fap | +5 |
 | Low screen time | +10 |
 

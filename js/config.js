@@ -21,7 +21,6 @@ export const STREAK_MILESTONES = [7, 14, 30, 50, 75, 100];
 
 export const DAYS_PER_WEEK = 7;
 
-export const CHALLENGE_NOTE_MAX_LENGTH = 200;
 export const MAX_DAILY_COUNT = 99;
 
 export const MIN_WEIGHT_KG = 20;
@@ -50,7 +49,6 @@ export const DEFAULT_SETTINGS = Object.freeze({
     food: 10,
     water: 5,
     sleep: 5,
-    challenge: 10,
     noFap: 5,
     screenTime: 10,
     weeklyWorkoutBonus: 15,

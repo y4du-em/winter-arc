@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import { challengeWeeks } from '../js/dates.js';
 import {
   buildDailySeries,
-  isChallengeComplete,
   maxDailyPoints,
   scoreDay,
   scoreLimitedHabit,
@@ -81,43 +80,8 @@ describe('scoreLimitedHabit', () => {
   });
 });
 
-describe('isChallengeComplete', () => {
-  it('should be true when ticked with a description', () => {
-    // Arrange
-    const entry = makeEntry({ challengeDone: true, challengeNote: 'Sang at open mic' });
-
-    // Act
-    const result = isChallengeComplete(entry);
-
-    // Assert
-    assert.equal(result, true);
-  });
-
-  it('should be false when ticked with only whitespace as description', () => {
-    // Arrange
-    const entry = makeEntry({ challengeDone: true, challengeNote: '   ' });
-
-    // Act
-    const result = isChallengeComplete(entry);
-
-    // Assert
-    assert.equal(result, false);
-  });
-
-  it('should be false when a description exists but it is not ticked', () => {
-    // Arrange
-    const entry = makeEntry({ challengeDone: false, challengeNote: 'Cold shower' });
-
-    // Act
-    const result = isChallengeComplete(entry);
-
-    // Assert
-    assert.equal(result, false);
-  });
-});
-
 describe('scoreDay', () => {
-  it('should total 75 for a perfect day with default points', () => {
+  it('should total 65 for a perfect day with default points', () => {
     // Arrange
     const entry = makePerfectEntry();
 
@@ -125,7 +89,7 @@ describe('scoreDay', () => {
     const { total } = scoreDay(entry, makeSettings().points);
 
     // Assert
-    assert.equal(total, 75);
+    assert.equal(total, 65);
   });
 
   it('should total 0 for an unlogged day', () => {
@@ -137,17 +101,6 @@ describe('scoreDay', () => {
 
     // Assert
     assert.equal(total, 0);
-  });
-
-  it('should give 0 challenge points when ticked without a description', () => {
-    // Arrange
-    const entry = makeEntry({ challengeDone: true, challengeNote: '' });
-
-    // Act
-    const { breakdown } = scoreDay(entry, makeSettings().points);
-
-    // Assert
-    assert.equal(breakdown.challenge, 0);
   });
 
   it('should give +5 for staying clean (no fap)', () => {
@@ -170,6 +123,17 @@ describe('scoreDay', () => {
 
     // Assert
     assert.equal(breakdown.noFap, 0);
+  });
+
+  it('should not score anything for the removed new/feared thing fields', () => {
+    // Arrange
+    const entry = { ...makeEntry(), challengeDone: true, challengeNote: 'Cold shower' };
+
+    // Act
+    const { breakdown } = scoreDay(entry, makeSettings().points);
+
+    // Assert
+    assert.equal('challenge' in breakdown, false);
   });
 
   it('should give +10 for low screen time', () => {
@@ -229,7 +193,7 @@ describe('scoreDay', () => {
 });
 
 describe('maxDailyPoints', () => {
-  it('should be 75 with default points', () => {
+  it('should be 65 with default points', () => {
     // Arrange
     const { points } = makeSettings();
 
@@ -237,7 +201,7 @@ describe('maxDailyPoints', () => {
     const result = maxDailyPoints(points);
 
     // Assert
-    assert.equal(result, 75);
+    assert.equal(result, 65);
   });
 });
 

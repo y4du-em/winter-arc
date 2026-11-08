@@ -5,7 +5,7 @@
  * Bump CACHE_VERSION when the list of files changes.
  */
 
-const CACHE_VERSION = 'winter-arc-v4';
+const CACHE_VERSION = 'winter-arc-v5';
 
 // Always revalidate with the server instead of trusting the browser's HTTP cache.
 // GitHub Pages lets browsers reuse files for 10 minutes; without this, an update

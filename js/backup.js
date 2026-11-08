@@ -19,8 +19,6 @@ export function createEmptyEntry() {
     food: false,
     water: false,
     sleep: false,
-    challengeDone: false,
-    challengeNote: '',
     noFap: false,
     screenTime: false,
   };
@@ -45,9 +43,17 @@ export function createEmptyData(now) {
 /** Entry fields added after the first release, with the value old entries get. */
 const ENTRY_FIELDS_ADDED_LATER = Object.freeze({ noFap: false, screenTime: false });
 
+/** Data from the removed "new or feared thing" habit, dropped when old data loads. */
+const REMOVED_ENTRY_FIELDS = Object.freeze(['challengeDone', 'challengeNote']);
+const REMOVED_POINT_KEYS = Object.freeze(['challenge']);
+
+function withoutKeys(object, keys) {
+  return Object.fromEntries(Object.entries(object).filter(([key]) => !keys.includes(key)));
+}
+
 /**
  * Upgrades entries saved by an older app version: fields added later get their
- * "not done" value, so old data stays valid instead of being rejected.
+ * "not done" value and fields of removed habits are dropped, so old data stays valid.
  * Anything that isn't an entry object is passed through for validation to report.
  * @param {unknown} entries
  * @returns {unknown}
@@ -56,7 +62,7 @@ function migrateEntries(entries) {
   if (typeof entries !== 'object' || entries === null || Array.isArray(entries)) return entries;
   return Object.fromEntries(Object.entries(entries).map(([date, entry]) => {
     const isEntryObject = typeof entry === 'object' && entry !== null && !Array.isArray(entry);
-    return [date, isEntryObject ? { ...ENTRY_FIELDS_ADDED_LATER, ...entry } : entry];
+    return [date, isEntryObject ? withoutKeys({ ...ENTRY_FIELDS_ADDED_LATER, ...entry }, REMOVED_ENTRY_FIELDS) : entry];
   }));
 }
 
@@ -74,7 +80,8 @@ export function parseBackup(raw) {
   }
 
   const defaults = createDefaultSettings();
-  const settings = { ...defaults, ...raw.settings, points: { ...defaults.points, ...raw.settings?.points } };
+  const points = withoutKeys({ ...defaults.points, ...raw.settings?.points }, REMOVED_POINT_KEYS);
+  const settings = { ...defaults, ...raw.settings, points };
   const entries = migrateEntries(raw.entries);
   const errors = [
     ...validateSettings(settings),

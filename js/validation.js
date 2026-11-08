@@ -4,7 +4,6 @@
  */
 
 import {
-  CHALLENGE_NOTE_MAX_LENGTH,
   DAYS_PER_WEEK,
   DEFAULT_SETTINGS,
   MAX_DAILY_COUNT,
@@ -15,7 +14,7 @@ import {
 } from './config.js';
 import { isISODate } from './dates.js';
 
-const ENTRY_BOOLEAN_FIELDS = ['workout', 'food', 'water', 'sleep', 'challengeDone', 'noFap', 'screenTime'];
+const ENTRY_BOOLEAN_FIELDS = ['workout', 'food', 'water', 'sleep', 'noFap', 'screenTime'];
 const ENTRY_COUNT_FIELDS = ['cigarettes', 'drinks'];
 const MAX_POINT_VALUE = 1000;
 
@@ -85,9 +84,6 @@ export function validateEntry(entry) {
   }
   for (const field of ENTRY_BOOLEAN_FIELDS) {
     if (typeof entry[field] !== 'boolean') errors.push(`"${field}" must be true or false.`);
-  }
-  if (typeof entry.challengeNote !== 'string' || entry.challengeNote.length > CHALLENGE_NOTE_MAX_LENGTH) {
-    errors.push(`"challengeNote" must be text of at most ${CHALLENGE_NOTE_MAX_LENGTH} characters.`);
   }
   return errors;
 }

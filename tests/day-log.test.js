@@ -250,7 +250,7 @@ describe('summarizeDayLog', () => {
 });
 
 describe('buildOverviewLog', () => {
-  it('should show how many of the 10 items were kept', () => {
+  it('should show how many of the 9 items were kept', () => {
     // Arrange
     const entries = { '2026-10-26': makePerfectEntry({ water: false }) };
 
@@ -258,7 +258,7 @@ describe('buildOverviewLog', () => {
     const [row] = buildOverviewLog(settings, entries, '2026-10-26');
 
     // Assert
-    assert.deepEqual({ keptCount: row.keptCount, habitCount: row.habitCount }, { keptCount: 9, habitCount: 10 });
+    assert.deepEqual({ keptCount: row.keptCount, habitCount: row.habitCount }, { keptCount: 8, habitCount: 9 });
   });
 
   it('should include the Sunday weekly workout bonus in that day\'s points', () => {
@@ -288,7 +288,7 @@ describe('buildOverviewLog', () => {
     const id = OVERVIEW_ID;
 
     // Act
-    const isHabitId = ['smoking', 'smokeFree', 'drinking', 'workout', 'food', 'water', 'sleep', 'challenge', 'noFap', 'screenTime'].includes(id);
+    const isHabitId = ['smoking', 'smokeFree', 'drinking', 'workout', 'food', 'water', 'sleep', 'noFap', 'screenTime'].includes(id);
 
     // Assert
     assert.equal(isHabitId, false);
@@ -308,6 +308,6 @@ describe('summarizeOverview', () => {
     const summary = summarizeOverview(rows);
 
     // Assert
-    assert.deepEqual(summary, { logged: 2, missing: 1, averageKept: '5.0', habitCount: 10 });
+    assert.deepEqual(summary, { logged: 2, missing: 1, averageKept: '4.5', habitCount: 9 });
   });
 });
