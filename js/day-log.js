@@ -18,6 +18,7 @@ export const DAY_STATUS = Object.freeze({
 /** Habits that also record how many, with the words used to describe the count. */
 const COUNTED_HABITS = Object.freeze({
   smoking: { field: 'cigarettes', singular: 'cigarette', plural: 'cigarettes' },
+  smokeFree: { field: 'cigarettes', singular: 'cigarette', plural: 'cigarettes' },
   drinking: { field: 'drinks', singular: 'drink', plural: 'drinks' },
 });
 

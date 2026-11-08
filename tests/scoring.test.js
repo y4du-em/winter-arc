@@ -117,7 +117,7 @@ describe('isChallengeComplete', () => {
 });
 
 describe('scoreDay', () => {
-  it('should total 65 for a perfect day with default points', () => {
+  it('should total 75 for a perfect day with default points', () => {
     // Arrange
     const entry = makePerfectEntry();
 
@@ -125,7 +125,7 @@ describe('scoreDay', () => {
     const { total } = scoreDay(entry, makeSettings().points);
 
     // Assert
-    assert.equal(total, 65);
+    assert.equal(total, 75);
   });
 
   it('should total 0 for an unlogged day', () => {
@@ -172,6 +172,39 @@ describe('scoreDay', () => {
     assert.equal(breakdown.noFap, 0);
   });
 
+  it('should give +10 for low screen time', () => {
+    // Arrange
+    const entry = makeEntry({ screenTime: true });
+
+    // Act
+    const { breakdown } = scoreDay(entry, makeSettings().points);
+
+    // Assert
+    assert.equal(breakdown.screenTime, 10);
+  });
+
+  it('should give 0 for low screen time when not ticked', () => {
+    // Arrange
+    const entry = makeEntry({ screenTime: false });
+
+    // Act
+    const { breakdown } = scoreDay(entry, makeSettings().points);
+
+    // Assert
+    assert.equal(breakdown.screenTime, 0);
+  });
+
+  it('should score smoking zero only once, not as two habits', () => {
+    // Arrange
+    const entry = makeEntry({ cigarettes: 0 });
+
+    // Act
+    const { breakdown } = scoreDay(entry, makeSettings().points);
+
+    // Assert
+    assert.equal(breakdown.smoking, 10);
+  });
+
   it('should score drinks with the same scheme as cigarettes', () => {
     // Arrange
     const entry = makeEntry({ drinks: 3 });
@@ -196,7 +229,7 @@ describe('scoreDay', () => {
 });
 
 describe('maxDailyPoints', () => {
-  it('should be 65 with default points', () => {
+  it('should be 75 with default points', () => {
     // Arrange
     const { points } = makeSettings();
 
@@ -204,7 +237,7 @@ describe('maxDailyPoints', () => {
     const result = maxDailyPoints(points);
 
     // Assert
-    assert.equal(result, 65);
+    assert.equal(result, 75);
   });
 });
 

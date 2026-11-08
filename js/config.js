@@ -14,6 +14,7 @@ export const ALLOWED_PER_DAY = 1;
 
 /** Highest count that still keeps the streak alive. */
 export const SMOKING_STREAK_MAX = 1;
+export const SMOKE_FREE_STREAK_MAX = 0;
 export const DRINKING_STREAK_MAX = 0;
 
 export const STREAK_MILESTONES = [7, 14, 30, 50, 75, 100];
@@ -51,6 +52,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
     sleep: 5,
     challenge: 10,
     noFap: 5,
+    screenTime: 10,
     weeklyWorkoutBonus: 15,
     weeklyWorkoutPenalty: 15,
   }),

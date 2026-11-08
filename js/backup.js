@@ -22,6 +22,7 @@ export function createEmptyEntry() {
     challengeDone: false,
     challengeNote: '',
     noFap: false,
+    screenTime: false,
   };
 }
 
@@ -41,6 +42,9 @@ export function createEmptyData(now) {
   };
 }
 
+/** Entry fields added after the first release, with the value old entries get. */
+const ENTRY_FIELDS_ADDED_LATER = Object.freeze({ noFap: false, screenTime: false });
+
 /**
  * Upgrades entries saved by an older app version: fields added later get their
  * "not done" value, so old data stays valid instead of being rejected.
@@ -52,8 +56,7 @@ function migrateEntries(entries) {
   if (typeof entries !== 'object' || entries === null || Array.isArray(entries)) return entries;
   return Object.fromEntries(Object.entries(entries).map(([date, entry]) => {
     const isEntryObject = typeof entry === 'object' && entry !== null && !Array.isArray(entry);
-    if (!isEntryObject || 'noFap' in entry) return [date, entry];
-    return [date, { ...entry, noFap: false }];
+    return [date, isEntryObject ? { ...ENTRY_FIELDS_ADDED_LATER, ...entry } : entry];
   }));
 }
 

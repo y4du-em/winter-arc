@@ -138,6 +138,45 @@ describe('parseBackup', () => {
     assert.equal(result.data.settings.points.noFap, 5);
   });
 
+  it('should mark low screen time as not ticked on entries saved before it existed', () => {
+    // Arrange
+    const oldEntry = makeEntry({ noFap: true });
+    delete oldEntry.screenTime;
+    const raw = makeData({ entries: { '2026-10-26': oldEntry } });
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.deepEqual(result.data.entries['2026-10-26'], { ...oldEntry, screenTime: false });
+  });
+
+  it('should fill in both newer fields on entries from the first app version', () => {
+    // Arrange
+    const oldEntry = makeEntry();
+    delete oldEntry.noFap;
+    delete oldEntry.screenTime;
+    const raw = makeData({ entries: { '2026-10-26': oldEntry } });
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.deepEqual(result.data.entries['2026-10-26'], { ...oldEntry, noFap: false, screenTime: false });
+  });
+
+  it('should fill in the low screen time point value for settings saved before it existed', () => {
+    // Arrange
+    const raw = makeData();
+    delete raw.settings.points.screenTime;
+
+    // Act
+    const result = parseBackup(raw);
+
+    // Assert
+    assert.equal(result.data.settings.points.screenTime, 10);
+  });
+
   it('should reject an array', () => {
     // Arrange
     const raw = [];

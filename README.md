@@ -13,9 +13,11 @@ A 100-day habit tracker (Mon Oct 26, 2026 → Tue Feb 2, 2027). It's an installa
 | Sleep 7 h+ | +5 |
 | New / feared thing (must describe it) | +10 |
 | No fap | +5 |
+| Low screen time | +10 |
 
 - **Weekly workout rule:** each Sunday you get +15 for 5+ workouts that week, or −15 for fewer. The short final week (Feb 1–2) has no weekly rule.
-- **Streaks:** smoking counts as "clean" at 1 cigarette or fewer, and drinking only at exactly 0 drinks. Badges come at 7/14/30/50/75/100 days, plus Perfect weeks.
+- **Streaks:** smoking has two: **Smoking ≤ 1** (0 or 1 cigarette) and **Smoking 0** (none); a 0-cigarette day counts for both. Drinking counts only at exactly 0 drinks. Badges come at 7/14/30/50/75/100 days.
+- **Perfect week:** smoking ≤ 1, no drinks, ate enough, water, sleep, no fap and low screen time on all 7 days, plus 5+ workouts.
 - **Day by day (Progress):** every day so far, numbered. Pick a habit to see Kept / Broken / Not logged per day (with cigarette and drink counts), or Overview for daily points and habits kept. Filter to only broken days; tap a day to edit it.
 - **Weight:** you're prompted to weigh in on Mondays, but can log any day. Shows a trend chart and progress toward your goal weight.
 

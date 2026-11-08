@@ -106,6 +106,28 @@ describe('countLabel', () => {
     assert.equal(label, '0 drinks');
   });
 
+  it('should show the cigarette count for smoking 0 too', () => {
+    // Arrange
+    const entry = makeEntry({ cigarettes: 2 });
+
+    // Act
+    const label = countLabel('smokeFree', entry);
+
+    // Assert
+    assert.equal(label, '2 cigarettes');
+  });
+
+  it('should count a zero-cigarette day for both smoking items in the overview', () => {
+    // Arrange
+    const entries = { '2026-10-26': makeEntry({ cigarettes: 0 }) };
+
+    // Act
+    const [row] = buildOverviewLog(settings, entries, '2026-10-26');
+
+    // Assert
+    assert.equal(row.keptCount, 3);
+  });
+
   it('should be null for a habit without a count', () => {
     // Arrange
     const entry = makeEntry({ noFap: true });
@@ -228,7 +250,7 @@ describe('summarizeDayLog', () => {
 });
 
 describe('buildOverviewLog', () => {
-  it('should show how many habits were kept out of all habits', () => {
+  it('should show how many of the 10 items were kept', () => {
     // Arrange
     const entries = { '2026-10-26': makePerfectEntry({ water: false }) };
 
@@ -236,7 +258,7 @@ describe('buildOverviewLog', () => {
     const [row] = buildOverviewLog(settings, entries, '2026-10-26');
 
     // Assert
-    assert.deepEqual({ keptCount: row.keptCount, habitCount: row.habitCount }, { keptCount: 7, habitCount: 8 });
+    assert.deepEqual({ keptCount: row.keptCount, habitCount: row.habitCount }, { keptCount: 9, habitCount: 10 });
   });
 
   it('should include the Sunday weekly workout bonus in that day\'s points', () => {
@@ -266,7 +288,7 @@ describe('buildOverviewLog', () => {
     const id = OVERVIEW_ID;
 
     // Act
-    const isHabitId = ['smoking', 'drinking', 'workout', 'food', 'water', 'sleep', 'challenge', 'noFap'].includes(id);
+    const isHabitId = ['smoking', 'smokeFree', 'drinking', 'workout', 'food', 'water', 'sleep', 'challenge', 'noFap', 'screenTime'].includes(id);
 
     // Assert
     assert.equal(isHabitId, false);
@@ -286,6 +308,6 @@ describe('summarizeOverview', () => {
     const summary = summarizeOverview(rows);
 
     // Assert
-    assert.deepEqual(summary, { logged: 2, missing: 1, averageKept: '4.0', habitCount: 8 });
+    assert.deepEqual(summary, { logged: 2, missing: 1, averageKept: '5.0', habitCount: 10 });
   });
 });

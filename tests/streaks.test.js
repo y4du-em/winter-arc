@@ -86,6 +86,50 @@ describe('habit streak rules', () => {
     assert.equal(result, false);
   });
 
+  it('should keep both smoking streaks with zero cigarettes', () => {
+    // Arrange
+    const entry = makeEntry({ cigarettes: 0 });
+
+    // Act
+    const result = [habit('smoking').isMet(entry), habit('smokeFree').isMet(entry)];
+
+    // Assert
+    assert.deepEqual(result, [true, true]);
+  });
+
+  it('should keep smoking ≤ 1 but break smoking 0 with one cigarette', () => {
+    // Arrange
+    const entry = makeEntry({ cigarettes: 1 });
+
+    // Act
+    const result = [habit('smoking').isMet(entry), habit('smokeFree').isMet(entry)];
+
+    // Assert
+    assert.deepEqual(result, [true, false]);
+  });
+
+  it('should keep the low screen time streak when ticked', () => {
+    // Arrange
+    const entry = makeEntry({ screenTime: true });
+
+    // Act
+    const result = habit('screenTime').isMet(entry);
+
+    // Assert
+    assert.equal(result, true);
+  });
+
+  it('should list all 10 tracked items in order', () => {
+    // Arrange
+    const habits = HABITS;
+
+    // Act
+    const ids = habits.map((item) => item.id);
+
+    // Assert
+    assert.deepEqual(ids, ['smoking', 'smokeFree', 'drinking', 'workout', 'food', 'water', 'sleep', 'challenge', 'noFap', 'screenTime']);
+  });
+
   it('should not count an unlogged day for any habit', () => {
     // Arrange
     const entry = undefined;
@@ -158,11 +202,11 @@ describe('bestStreak', () => {
 });
 
 describe('isPerfectWeek', () => {
-  it('should be perfect when every core habit is met daily and 5 workouts are done', () => {
+  it('should be perfect when every daily habit is kept and 5 workouts are done', () => {
     // Arrange
     const entries = {
-      ...entriesFor(WEEK_ONE, makePerfectEntry({ workout: false, water: false, sleep: false })),
-      ...entriesFor(WEEK_ONE.slice(0, 5), makePerfectEntry({ water: false, sleep: false })),
+      ...entriesFor(WEEK_ONE, makePerfectEntry({ workout: false })),
+      ...entriesFor(WEEK_ONE.slice(0, 5), makePerfectEntry()),
     };
 
     // Act
@@ -197,9 +241,53 @@ describe('isPerfectWeek', () => {
     assert.equal(result, false);
   });
 
-  it('should still be perfect without no fap, since it is not part of Perfect week', () => {
+  it('should not be perfect when one day misses no fap', () => {
     // Arrange
-    const entries = entriesFor(WEEK_ONE, makePerfectEntry({ noFap: false }));
+    const entries = { ...entriesFor(WEEK_ONE, makePerfectEntry()), '2026-10-28': makePerfectEntry({ noFap: false }) };
+
+    // Act
+    const result = isPerfectWeek(weekOne, entries, settings);
+
+    // Assert
+    assert.equal(result, false);
+  });
+
+  it('should not be perfect when one day misses water', () => {
+    // Arrange
+    const entries = { ...entriesFor(WEEK_ONE, makePerfectEntry()), '2026-10-29': makePerfectEntry({ water: false }) };
+
+    // Act
+    const result = isPerfectWeek(weekOne, entries, settings);
+
+    // Assert
+    assert.equal(result, false);
+  });
+
+  it('should not be perfect when one day misses sleep', () => {
+    // Arrange
+    const entries = { ...entriesFor(WEEK_ONE, makePerfectEntry()), '2026-10-29': makePerfectEntry({ sleep: false }) };
+
+    // Act
+    const result = isPerfectWeek(weekOne, entries, settings);
+
+    // Assert
+    assert.equal(result, false);
+  });
+
+  it('should not be perfect when one day misses low screen time', () => {
+    // Arrange
+    const entries = { ...entriesFor(WEEK_ONE, makePerfectEntry()), '2026-10-30': makePerfectEntry({ screenTime: false }) };
+
+    // Act
+    const result = isPerfectWeek(weekOne, entries, settings);
+
+    // Assert
+    assert.equal(result, false);
+  });
+
+  it('should still be perfect without the new/feared thing, since it is not part of Perfect week', () => {
+    // Arrange
+    const entries = entriesFor(WEEK_ONE, makePerfectEntry({ challengeDone: false, challengeNote: '' }));
 
     // Act
     const result = isPerfectWeek(weekOne, entries, settings);

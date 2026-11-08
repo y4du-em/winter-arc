@@ -2,13 +2,14 @@
  * Pure streak, badge and perfect-week calculations.
  */
 
-import { DRINKING_STREAK_MAX, SMOKING_STREAK_MAX, STREAK_MILESTONES } from './config.js';
+import { DRINKING_STREAK_MAX, SMOKE_FREE_STREAK_MAX, SMOKING_STREAK_MAX, STREAK_MILESTONES } from './config.js';
 import { challengeWeeks, listDates } from './dates.js';
 import { countWorkouts, isChallengeComplete } from './scoring.js';
 
 /** Each habit and the rule a day must pass to keep its streak. */
 export const HABITS = Object.freeze([
   { id: 'smoking', label: 'Smoking ≤ 1', icon: '🚭', isMet: (entry) => Number.isInteger(entry?.cigarettes) && entry.cigarettes <= SMOKING_STREAK_MAX },
+  { id: 'smokeFree', label: 'Smoking 0', icon: '🌬️', isMet: (entry) => Number.isInteger(entry?.cigarettes) && entry.cigarettes <= SMOKE_FREE_STREAK_MAX },
   { id: 'drinking', label: 'No drinks', icon: '🚫', isMet: (entry) => Number.isInteger(entry?.drinks) && entry.drinks <= DRINKING_STREAK_MAX },
   { id: 'workout', label: 'Workout', icon: '💪', isMet: (entry) => entry?.workout === true },
   { id: 'food', label: 'Ate enough', icon: '🍽️', isMet: (entry) => entry?.food === true },
@@ -16,6 +17,7 @@ export const HABITS = Object.freeze([
   { id: 'sleep', label: 'Sleep 7h+', icon: '😴', isMet: (entry) => entry?.sleep === true },
   { id: 'challenge', label: 'New / feared thing', icon: '🔥', isMet: (entry) => isChallengeComplete(entry) },
   { id: 'noFap', label: 'No fap', icon: '🧘', isMet: (entry) => entry?.noFap === true },
+  { id: 'screenTime', label: 'Low screen time', icon: '📵', isMet: (entry) => entry?.screenTime === true },
 ]);
 
 function challengeDatesUpTo(settings, today) {
@@ -53,16 +55,19 @@ export function bestStreak(habit, settings, entries, today) {
   return best;
 }
 
+/** Habits that must be kept on all 7 days of a perfect week (workouts use the weekly goal instead). */
+const PERFECT_WEEK_DAILY_HABIT_IDS = Object.freeze(['smoking', 'drinking', 'food', 'water', 'sleep', 'noFap', 'screenTime']);
+
 /**
  * Whether a full week counts as perfect: every day smoking ≤ 1, no drinks,
- * ate enough and a described new/feared thing, plus the weekly workout goal.
+ * ate enough, water, sleep, no fap and low screen time, plus the weekly workout goal.
  * @returns {boolean}
  */
 export function isPerfectWeek(week, entries, settings) {
   if (!week.isFullWeek) return false;
   const isEveryDayClean = week.dates.every((date) => {
     const entry = entries[date];
-    return ['smoking', 'drinking', 'food', 'challenge'].every((id) => HABITS.find((habit) => habit.id === id).isMet(entry));
+    return PERFECT_WEEK_DAILY_HABIT_IDS.every((id) => HABITS.find((habit) => habit.id === id).isMet(entry));
   });
   return isEveryDayClean && countWorkouts(week.dates, entries) >= settings.workoutDaysPerWeek;
 }
