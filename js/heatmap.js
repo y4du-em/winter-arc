@@ -3,7 +3,7 @@
  * or by whether one habit was kept or broken.
  */
 
-import { DAY_STATUS, countLabel, dayStatus } from './day-log.js';
+import { DAY_STATUS, countLabel, dayStatus } from './habit-status.js';
 import { listDates } from './dates.js';
 import { el, formatDate, formatSigned } from './dom.js';
 

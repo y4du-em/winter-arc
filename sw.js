@@ -5,7 +5,7 @@
  * Bump CACHE_VERSION when the list of files changes.
  */
 
-const CACHE_VERSION = 'winter-arc-v5';
+const CACHE_VERSION = 'winter-arc-v6';
 
 // Always revalidate with the server instead of trusting the browser's HTTP cache.
 // GitHub Pages lets browsers reuse files for 10 minutes; without this, an update
@@ -27,15 +27,14 @@ const APP_SHELL = [
   './js/charts.js',
   './js/config.js',
   './js/dates.js',
-  './js/day-log.js',
   './js/dom.js',
+  './js/habit-status.js',
   './js/heatmap.js',
   './js/scoring.js',
   './js/storage.js',
   './js/streaks.js',
   './js/validation.js',
   './js/weight-stats.js',
-  './js/views/day-log.js',
   './js/views/progress.js',
   './js/views/settings.js',
   './js/views/today.js',

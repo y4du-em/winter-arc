@@ -1,14 +1,13 @@
 /**
- * Progress screen: summary stats, points charts, 100-day map, day-by-day list, streaks and badges.
+ * Progress screen: summary stats, points charts, 100-day map, streaks and badges.
  */
 
 import { renderDailyPointsChart, renderRunningTotalChart } from '../charts.js';
 import { byId, el, formatDate, formatSigned, statTile } from '../dom.js';
 import { renderHeatmap } from '../heatmap.js';
 import { buildDailySeries, maxDailyPoints } from '../scoring.js';
-import { OVERVIEW_ID } from '../day-log.js';
+import { OVERVIEW_ID } from '../habit-status.js';
 import { HABITS, countPerfectWeeks, streakSummary } from '../streaks.js';
-import { createDayLog } from './day-log.js';
 
 function renderStats(series, perfectWeeks) {
   const logged = series.filter((day) => day.isLogged);
@@ -56,7 +55,6 @@ function renderBadges(summary, perfectWeeks) {
 export function createProgressView(app) {
   const habitPicker = byId('habit-picker');
   let selectedId = OVERVIEW_ID;
-  const dayLog = createDayLog(app, () => selectedId);
 
   habitPicker.replaceChildren(
     el('option', { text: '📋 Overview (daily score)', attrs: { value: OVERVIEW_ID } }),
@@ -88,7 +86,6 @@ export function createProgressView(app) {
       maxPoints: maxDailyPoints(data.settings.points),
       onSelect: app.openDay,
     });
-    dayLog.render();
     renderStreakTable(summary);
     renderBadges(summary, perfectWeeks);
   }
