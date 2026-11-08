@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { heatLevel } from '../js/heatmap.js';
+import { habitHeatLevel, heatLevel } from '../js/heatmap.js';
+import { makeEntry } from './helpers.js';
 
 const MAX_POINTS = 60;
 
@@ -80,5 +81,51 @@ describe('heatLevel', () => {
 
     // Assert
     assert.equal(level, 'zero');
+  });
+});
+
+describe('habitHeatLevel', () => {
+  it('should color a zero-cigarette day as kept for smoking 0', () => {
+    // Arrange
+    const entry = makeEntry({ cigarettes: 0 });
+
+    // Act
+    const level = habitHeatLevel('smokeFree', entry, false);
+
+    // Assert
+    assert.equal(level, 'kept');
+  });
+
+  it('should color a one-cigarette day as broken for smoking 0', () => {
+    // Arrange
+    const entry = makeEntry({ cigarettes: 1 });
+
+    // Act
+    const level = habitHeatLevel('smokeFree', entry, false);
+
+    // Assert
+    assert.equal(level, 'broken');
+  });
+
+  it('should color an unlogged past day as missing', () => {
+    // Arrange
+    const entry = undefined;
+
+    // Act
+    const level = habitHeatLevel('screenTime', entry, false);
+
+    // Assert
+    assert.equal(level, 'missing');
+  });
+
+  it('should color an upcoming day as future', () => {
+    // Arrange
+    const entry = undefined;
+
+    // Act
+    const level = habitHeatLevel('noFap', entry, true);
+
+    // Assert
+    assert.equal(level, 'future');
   });
 });

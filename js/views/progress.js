@@ -6,7 +6,8 @@ import { renderDailyPointsChart, renderRunningTotalChart } from '../charts.js';
 import { byId, el, formatDate, formatSigned, statTile } from '../dom.js';
 import { renderHeatmap } from '../heatmap.js';
 import { buildDailySeries, isChallengeComplete, maxDailyPoints } from '../scoring.js';
-import { countPerfectWeeks, streakSummary } from '../streaks.js';
+import { OVERVIEW_ID } from '../day-log.js';
+import { HABITS, countPerfectWeeks, streakSummary } from '../streaks.js';
 import { createDayLog } from './day-log.js';
 
 function renderStats(series, perfectWeeks) {
@@ -66,7 +67,18 @@ function renderFears(data, series) {
  * @returns {{ render: () => void }}
  */
 export function createProgressView(app) {
-  const dayLog = createDayLog(app);
+  const habitPicker = byId('habit-picker');
+  let selectedId = OVERVIEW_ID;
+  const dayLog = createDayLog(app, () => selectedId);
+
+  habitPicker.replaceChildren(
+    el('option', { text: '📋 Overview (daily score)', attrs: { value: OVERVIEW_ID } }),
+    ...HABITS.map((habit) => el('option', { text: `${habit.icon} ${habit.label}`, attrs: { value: habit.id } })),
+  );
+  habitPicker.addEventListener('change', () => {
+    selectedId = habitPicker.value;
+    render();
+  });
 
   /** Re-renders the view from current data. */
   function render() {
@@ -80,9 +92,12 @@ export function createProgressView(app) {
     byId('chart-empty').hidden = series.length > 0;
     renderDailyPointsChart(byId('chart-daily'), series);
     renderRunningTotalChart(byId('chart-total'), series);
+    habitPicker.value = selectedId;
     renderHeatmap(byId('heatmap'), byId('heatmap-legend'), {
       settings: data.settings,
+      entries: data.entries,
       series,
+      habitId: selectedId === OVERVIEW_ID ? null : selectedId,
       maxPoints: maxDailyPoints(data.settings.points),
       onSelect: app.openDay,
     });

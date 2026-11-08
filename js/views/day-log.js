@@ -36,21 +36,11 @@ const EMPTY_TEXT = {
 /**
  * Creates the day-by-day card.
  * @param {{ getData: () => object, getToday: () => string, openDay: (date: string) => void }} app
+ * @param {() => string} getSelectedId The habit picked on the 100-day map, or OVERVIEW_ID.
  * @returns {{ render: () => void }}
  */
-export function createDayLog(app) {
-  const habitSelect = byId('day-log-habit');
+export function createDayLog(app, getSelectedId) {
   const brokenOnlyInput = byId('day-log-broken-only');
-  let selectedId = OVERVIEW_ID;
-
-  habitSelect.replaceChildren(
-    el('option', { text: '📋 Overview', attrs: { value: OVERVIEW_ID } }),
-    ...HABITS.map((habit) => el('option', { text: `${habit.icon} ${habit.label}`, attrs: { value: habit.id } })),
-  );
-  habitSelect.addEventListener('change', () => {
-    selectedId = habitSelect.value;
-    render();
-  });
   brokenOnlyInput.addEventListener('change', render);
 
   function dayButton(row, description, children) {
@@ -97,9 +87,9 @@ export function createDayLog(app) {
     };
   }
 
-  function renderHabit(data, today) {
-    const rows = buildDayLog(data.settings, data.entries, today, selectedId);
-    const summary = summarizeDayLog(selectedId, rows, data.entries);
+  function renderHabit(data, today, habitId) {
+    const rows = buildDayLog(data.settings, data.entries, today, habitId);
+    const summary = summarizeDayLog(habitId, rows, data.entries);
     const parts = [
       `${STATUS_TEXT[DAY_STATUS.kept]} ${summary.kept}`,
       `${STATUS_TEXT[DAY_STATUS.broken]} ${summary.broken}`,
@@ -118,12 +108,14 @@ export function createDayLog(app) {
   function render() {
     const data = app.getData();
     const today = app.getToday();
+    const selectedId = getSelectedId();
     const isOverview = selectedId === OVERVIEW_ID;
     // "Only broken" isn't offered in Overview: rest days would make almost every day count as broken.
     byId('day-log-broken-only-wrap').hidden = isOverview;
-    habitSelect.value = selectedId;
+    const habit = HABITS.find((candidate) => candidate.id === selectedId);
+    byId('day-log-habit-name').textContent = isOverview ? '📋 Overview' : `${habit.icon} ${habit.label}`;
 
-    const { summaryText, items, emptyText } = isOverview ? renderOverview(data, today) : renderHabit(data, today);
+    const { summaryText, items, emptyText } = isOverview ? renderOverview(data, today) : renderHabit(data, today, selectedId);
     byId('day-log-summary').textContent = summaryText;
     byId('day-log-list').replaceChildren(...items);
     const empty = byId('day-log-empty');

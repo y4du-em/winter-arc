@@ -160,6 +160,11 @@
 
       <div class="card">
         <h2 class="card-title">100-day map</h2>
+        <label class="select-label picker">
+          <span class="muted small">Show</span>
+          <select id="habit-picker" aria-describedby="habit-picker-help"></select>
+        </label>
+        <p class="visually-hidden" id="habit-picker-help">Colors the 100-day map and filters the day-by-day list below.</p>
         <div class="heatmap" id="heatmap" role="grid" aria-label="Score for each challenge day"></div>
         <div class="heatmap-legend" id="heatmap-legend"></div>
       </div>
@@ -167,10 +172,7 @@
       <div class="card">
         <h2 class="card-title">Day by day</h2>
         <div class="day-log-controls">
-          <label class="select-label">
-            <span class="visually-hidden">Choose a habit</span>
-            <select id="day-log-habit"></select>
-          </label>
+          <p class="day-log-habit" id="day-log-habit-name"></p>
           <label class="check-label" id="day-log-broken-only-wrap">
             <input type="checkbox" id="day-log-broken-only"> Only broken
           </label>
