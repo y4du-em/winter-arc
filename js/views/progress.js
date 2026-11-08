@@ -1,5 +1,5 @@
 /**
- * Progress screen: summary stats, points charts, 100-day map, streaks, badges and fears faced.
+ * Progress screen: summary stats, points charts, 100-day map, day-by-day list, streaks, badges and fears faced.
  */
 
 import { renderDailyPointsChart, renderRunningTotalChart } from '../charts.js';
@@ -7,6 +7,7 @@ import { byId, el, formatDate, formatSigned, statTile } from '../dom.js';
 import { renderHeatmap } from '../heatmap.js';
 import { buildDailySeries, isChallengeComplete, maxDailyPoints } from '../scoring.js';
 import { countPerfectWeeks, streakSummary } from '../streaks.js';
+import { createDayLog } from './day-log.js';
 
 function renderStats(series, perfectWeeks) {
   const logged = series.filter((day) => day.isLogged);
@@ -65,6 +66,8 @@ function renderFears(data, series) {
  * @returns {{ render: () => void }}
  */
 export function createProgressView(app) {
+  const dayLog = createDayLog(app);
+
   /** Re-renders the view from current data. */
   function render() {
     const data = app.getData();
@@ -83,6 +86,7 @@ export function createProgressView(app) {
       maxPoints: maxDailyPoints(data.settings.points),
       onSelect: app.openDay,
     });
+    dayLog.render();
     renderStreakTable(summary);
     renderBadges(summary, perfectWeeks);
     renderFears(data, series);

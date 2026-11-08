@@ -168,6 +168,22 @@
       </div>
 
       <div class="card">
+        <h2 class="card-title">Day by day</h2>
+        <div class="day-log-controls">
+          <label class="select-label">
+            <span class="visually-hidden">Choose a habit</span>
+            <select id="day-log-habit"></select>
+          </label>
+          <label class="check-label" id="day-log-broken-only-wrap">
+            <input type="checkbox" id="day-log-broken-only"> Only broken
+          </label>
+        </div>
+        <p class="muted small" id="day-log-summary"></p>
+        <ol class="day-log" id="day-log-list"></ol>
+        <p class="empty" id="day-log-empty" hidden></p>
+      </div>
+
+      <div class="card">
         <h2 class="card-title">Streaks</h2>
         <table class="table" id="streak-table">
           <thead><tr><th scope="col">Habit</th><th scope="col">Current</th><th scope="col">Best</th></tr></thead>

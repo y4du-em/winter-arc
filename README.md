@@ -16,6 +16,7 @@ A 100-day habit tracker (Mon Oct 26, 2026 → Tue Feb 2, 2027). It's an installa
 
 - **Weekly workout rule:** each Sunday you get +15 for 5+ workouts that week, or −15 for fewer. The short final week (Feb 1–2) has no weekly rule.
 - **Streaks:** smoking counts as "clean" at 1 cigarette or fewer, and drinking only at exactly 0 drinks. Badges come at 7/14/30/50/75/100 days, plus Perfect weeks.
+- **Day by day (Progress):** every day so far, numbered. Pick a habit to see Kept / Broken / Not logged per day (with cigarette and drink counts), or Overview for daily points and habits kept. Filter to only broken days; tap a day to edit it.
 - **Weight:** you're prompted to weigh in on Mondays, but can log any day. Shows a trend chart and progress toward your goal weight.
 
 ## Your data
@@ -61,6 +62,7 @@ js/weight-stats.js  weight summary and goal progress
 js/storage.js       IndexedDB + localStorage persistence, backup download
 js/charts.js        Chart.js wrappers
 js/heatmap.js       100-day map
+js/day-log.js       day-by-day kept/broken list per habit
 js/views/*.js       Today, Progress, Weight, Settings screens
 js/app.js           entry point
 tests/              node:test unit tests for all pure logic
